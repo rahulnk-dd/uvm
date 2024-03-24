@@ -1,0 +1,21 @@
+class component_a extends uvm_component;
+  `uvm_component_utils(component_a);
+  transaction trans;
+  uvm_blocking_put_port#(transaction) trans_out;
+  
+  function new (string name, uvm_component parent);
+    super.new(name, parent);
+    trans_out = new("trans_out", this);
+  endfunction
+  
+  virtual task run_phase (uvm_phase phase);
+
+    phase.raise_objection(this);
+    trans = transaction::type_id::create("trans", this);
+    assert(trans.randomize());
+    trans_out.put(trans);
+    trans.print();
+    phase.drop_objection(this);
+
+  endtask
+endclass
